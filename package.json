@@ -1,0 +1,44 @@
+{
+  "name": "glsl-token-transpile-300",
+  "version": "1.0.0",
+  "description": "transpiles GLSL tokens from v100 to v300 es",
+  "main": "index.js",
+  "license": "MIT",
+  "author": {
+    "name": "Matt DesLauriers",
+    "email": "dave.des@gmail.com",
+    "url": "https://github.com/mattdesl"
+  },
+  "dependencies": {
+    "glsl-version-regex": "^1.0.0"
+  },
+  "devDependencies": {
+    "faucet": "0.0.1",
+    "glsl-token-string": "^1.0.1",
+    "glsl-tokenizer": "^2.0.2",
+    "tape": "^4.0.0"
+  },
+  "scripts": {
+    "test": "node test.js | faucet"
+  },
+  "keywords": [
+    "glsl",
+    "es",
+    "300",
+    "webgl2",
+    "webgl",
+    "gl",
+    "stackgl",
+    "glslify",
+    "token",
+    "tokenize"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/Jam3/glsl-token-transpile-100-to-300.git"
+  },
+  "homepage": "https://github.com/Jam3/glsl-token-transpile-100-to-300",
+  "bugs": {
+    "url": "https://github.com/Jam3/glsl-token-transpile-100-to-300/issues"
+  }
+}
