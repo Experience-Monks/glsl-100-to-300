@@ -1,4 +1,5 @@
 var version = require('glsl-version-regex')
+var inject = require('glsl-token-inject-block')
 
 module.exports.vertex = transpile100to300.bind(null, true)
 module.exports.fragment = transpile100to300.bind(null, false)
@@ -7,7 +8,7 @@ function transpile100to300 (isVertex, tokens) {
   var oldVersion = versionify(tokens)
   if (oldVersion === '300 es') {
     // already in version 300, seems OK
-    return
+    return tokens
   }
 
   var nameCache = {}
@@ -62,27 +63,9 @@ function getUniqueName (tokens, nameCache, name, baseName) {
   return name
 }
 
-function getStartIndex (tokens) {
-  // determine starting index for attributes
-  var start = 0
-  for (var i = 0; i < tokens.length; i++) {
-    var token = tokens[i]
-    if (token.type === 'preprocessor') {
-      if (/^#(extension|version)/.test(token.data)) {
-        start = Math.max(start, i + 1)
-      }
-    }
-  }
-  return start
-}
-
 function insertFragOutput (tokens, name, dataType) {
-  // insert it before the first "in/out/attribute/varying"
-  var start = getStartIndex(tokens)
-  if (tokens[start] && /\n$/.test(tokens[start].data)) {
-    tokens.splice(start++, 0, { type: 'whitespace', data: '\n' })
-  }
-  tokens.splice(start, 0,
+  // inserts it before the first "in/out/attribute/varying"
+  inject(tokens, [
     // "out vec4 fragColor;"
     { type: 'keyword', data: 'out' },
     { type: 'whitespace', data: ' ' },
@@ -90,7 +73,7 @@ function insertFragOutput (tokens, name, dataType) {
     { type: 'whitespace', data: ' ' },
     { type: 'ident', data: name },
     { type: 'operator', data: ';' }
-  )
+  ])
 }
 
 function versionify (tokens) {
