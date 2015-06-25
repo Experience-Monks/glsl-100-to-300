@@ -35,10 +35,10 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git://github.com/Jam3/glsl-token-transpile-100-to-300.git"
+    "url": "git://github.com/Jam3/glsl-token-transpile-300.git"
   },
-  "homepage": "https://github.com/Jam3/glsl-token-transpile-100-to-300",
+  "homepage": "https://github.com/Jam3/glsl-token-transpile-300",
   "bugs": {
-    "url": "https://github.com/Jam3/glsl-token-transpile-100-to-300/issues"
+    "url": "https://github.com/Jam3/glsl-token-transpile-300/issues"
   }
 }
