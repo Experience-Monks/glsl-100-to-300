@@ -2,11 +2,20 @@
 
 [![unstable](http://badges.github.io/stability-badges/dist/unstable.svg)](http://github.com/badges/stability-badges)
 
-Naively transpiles [GLSL tokens](https://www.npmjs.com/package/glsl-tokenizer) from version `"100"` (WebGL1) to `"300 es"` (WebGL2).
-
-Modifies the tokens in place. Ignores `column`, `position` and `line` information. 
+Transpile GLSL source tokens from version `"100"` (WebGL1) to `"300 es"` (WebGL2).
 
 ## Example
+
+Source:
+
+```js
+var transpile = require('glsl-token-transpile-300')
+var tokenize = require('glsl-tokenizer')
+var stringify = require('glsl-token-string')
+
+var tokens = transpile.fragment(tokenize(inputShader))
+console.log(stringify(tokens))
+```
 
 Input fragment shader:
 
@@ -19,15 +28,6 @@ void main() {
   vec4 fragColor = vec4(0.5);
   gl_FragColor = texture2D(iChannel0, vUv);
 }
-```
-
-```js
-var transpile = require('glsl-token-transpile-300')
-var tokenize = require('glsl-tokenizer')
-var stringify = require('glsl-token-string')
-
-var tokens = transpile(tokenize(inputShader))
-console.log(stringify(tokens))
 ```
 
 The resulting WebGL2 shader:
@@ -48,11 +48,19 @@ void main() {
 
 [![NPM](https://nodei.co/npm/glsl-token-transpile-300.png)](https://www.npmjs.com/package/glsl-token-transpile-300)
 
-#### `transpile(tokens)`
+Operates on [GLSL tokens](https://www.npmjs.com/package/glsl-tokenizer), but ignoring `column`, `position` and `line`.
 
-Transpiles the `tokens` array and modifies them in place, to allow the code to run in a WebGL2 context.
+#### `transpile.vertex(tokens)`
+
+Transpiles the `tokens` array from a vertex shader and modifies them in place, to allow the code to run in a WebGL2 context.
+
+In this case, `varying` will be converted to `out`.
 
 Returns the `tokens` array.
+
+#### `transpile.fragment(tokens)`
+
+Same as above, but handles fragment shaders, where `varying` will be converted to `in`.
 
 ## Limitations
 

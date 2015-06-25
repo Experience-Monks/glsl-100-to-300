@@ -5,7 +5,7 @@ var stringify = require('glsl-token-string')
 
 test('transpiles GLSL tokens from v100 to v300 es', function (t) {
   t.throws(function () {
-    transpile(tokenize('#version 300\nvoid main(){}'))
+    transpile.vertex(tokenize('#version 300\nvoid main(){}'))
   }, 'cannot handle non-es version')
 
   var shader
@@ -19,7 +19,7 @@ test('transpiles GLSL tokens from v100 to v300 es', function (t) {
     'gl_Position = position;',
     '}'
   ].join('\n'))
-  var result = stringify(transpile(shader, true))
+  var result = stringify(transpile.vertex(shader))
   t.equal(result, [
     '#version 300 es',
     '#define FOO',
@@ -49,7 +49,7 @@ test('transpiles GLSL tokens from v100 to v300 es', function (t) {
     '}'
   ].join('\n'))
 
-  result = stringify(transpile(shader, false))
+  result = stringify(transpile.fragment(shader))
   t.equal(result, [
     '#version 300 es',
     '#define FOO',

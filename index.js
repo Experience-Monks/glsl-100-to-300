@@ -1,7 +1,9 @@
 var version = require('glsl-version-regex')
 
-module.exports = transpile100to300
-function transpile100to300 (tokens, isVertex) {
+module.exports.vertex = transpile100to300.bind(null, true)
+module.exports.fragment = transpile100to300.bind(null, false)
+
+function transpile100to300 (isVertex, tokens) {
   var oldVersion = versionify(tokens)
   if (oldVersion === '300 es') {
     // already in version 300, seems OK
