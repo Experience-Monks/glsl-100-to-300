@@ -1,6 +1,6 @@
 {
   "name": "glsl-token-transpile-300",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "transpiles GLSL tokens from v100 to v300 es",
   "main": "index.js",
   "license": "MIT",
