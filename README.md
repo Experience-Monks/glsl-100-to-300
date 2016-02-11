@@ -2,6 +2,15 @@
 
 [![unstable](http://badges.github.io/stability-badges/dist/unstable.svg)](http://github.com/badges/stability-badges)
 
+## RENAMED!
+
+:warning:
+
+This has been renamed to [glsl-100-to-300](http://github.com/Jam3/glsl-100-to-300/blob/).
+
+---
+
+
 Transpile GLSL source tokens from version `"100"` (WebGL1) to `"300 es"` (WebGL2).
 
 ## Example
