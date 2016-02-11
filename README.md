@@ -47,7 +47,7 @@ void main() {
 }
 ```
 
-`sample` is a reserved word in 300es so it must be renamed, and `GL_OES_standard_derivatives` has been promoted to core so it should no longer be included in GLSL.
+`sample` is a reserved word in 300es so it must be renamed, and `GL_OES_standard_derivatives` has been promoted to core so the extension pragma should be removed.
 
 ## Usage
 
