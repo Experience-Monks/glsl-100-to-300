@@ -8,7 +8,21 @@ test('transpiles GLSL tokens from v100 to v300 es', function (t) {
     transpile.vertex(tokenize('#version 300\nvoid main(){}'))
   }, 'cannot handle non-es version')
 
-  var shader
+  var shader, result
+  shader = tokenize([
+    '#version 100',
+    '#extension GL_OES_standard_derivatives : enable',
+    '#extension GL_EXT_draw_buffers : enable',
+    '#extension GL_EXT_fancy_dancy : enable',
+    'void main() {}'
+  ].join('\n'))
+  result = stringify(transpile.vertex(shader))
+  t.equal(result, [
+    '#version 300 es',
+    '#extension GL_EXT_fancy_dancy : enable',
+    'void main() {}'
+  ].join('\n'), 'removes core extensions')
+
   shader = tokenize([
     '#version 100',
     '#define FOO',
@@ -19,7 +33,7 @@ test('transpiles GLSL tokens from v100 to v300 es', function (t) {
     'gl_Position = position;',
     '}'
   ].join('\n'))
-  var result = stringify(transpile.vertex(shader))
+  result = stringify(transpile.vertex(shader))
   t.equal(result, [
     '#version 300 es',
     '#define FOO',
@@ -30,6 +44,25 @@ test('transpiles GLSL tokens from v100 to v300 es', function (t) {
     'gl_Position = position;',
     '}'
   ].join('\n'), 'vertex shader')
+
+  shader = tokenize([
+    '#version 100',
+    'precision mediump float;',
+    'precision mediump int;',
+    'void main() {',
+    'gl_FragColor = vec4(1.0);',
+    '}'
+  ].join('\n'))
+  result = stringify(transpile.fragment(shader))
+  t.equal(result, [
+    '#version 300 es',
+    'precision mediump float;',
+    'precision mediump int;',
+    'out vec4 fragColor;',
+    'void main() {',
+    'fragColor = vec4(1.0);',
+    '}'
+  ].join('\n'), 'handles precision nicely')
 
   shader = tokenize([
     '#version 100',

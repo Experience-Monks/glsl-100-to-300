@@ -4,6 +4,13 @@ var inject = require('glsl-token-inject-block')
 module.exports.vertex = transpile100to300.bind(null, true)
 module.exports.fragment = transpile100to300.bind(null, false)
 
+var coreGLSLExtensions = [
+  'GL_OES_standard_derivatives',
+  'GL_EXT_frag_depth',
+  'GL_EXT_draw_buffers',
+  'GL_EXT_shader_texture_lod'
+]
+
 function transpile100to300 (isVertex, tokens) {
   var oldVersion = versionify(tokens)
   if (oldVersion === '300 es') {
@@ -14,8 +21,9 @@ function transpile100to300 (isVertex, tokens) {
   var nameCache = {}
   var fragColorName = null
   var fragDepthName = null
-  for (var i = 0; i < tokens.length; i++) {
-    var token = tokens[i]
+  var i, token
+  for (i = 0; i < tokens.length; i++) {
+    token = tokens[i]
     if (token.type === 'keyword') {
       if (token.data === 'attribute') token.data = 'in'
       else if (token.data === 'varying') token.data = isVertex ? 'out' : 'in'
@@ -38,6 +46,19 @@ function transpile100to300 (isVertex, tokens) {
           insertFragOutput(tokens, fragDepthName, 'float')
         }
         token.data = fragDepthName
+      }
+    }
+  }
+
+  for (i = tokens.length - 1; i >= 0; i--) {
+    token = tokens[i]
+    if (token.type === 'preprocessor') {
+      var match = token.data.match(/\#extension\s+(.*)\s+\:/)
+      if (match && match[1] && coreGLSLExtensions.indexOf(match[1]) >= 0) {
+        var nextToken = tokens[i + 1]
+        var count = (nextToken && nextToken.type === 'whitespace')
+          ? 2 : 1
+        tokens.splice(i, count)
       }
     }
   }

@@ -10,7 +10,7 @@
     "url": "https://github.com/mattdesl"
   },
   "dependencies": {
-    "glsl-token-inject-block": "^1.0.0",
+    "glsl-token-inject-block": "^1.1.0",
     "glsl-version-regex": "^1.0.0"
   },
   "devDependencies": {
