@@ -32,19 +32,22 @@ void main() {
 }
 ```
 
-The resulting WebGL2 shader. `sample` is a reserved word in 300es, and `GL_OES_standard_derivatives` has been promoted to core so it should no longer be included in the shader.
+The resulting WebGL2 shader.
 
 ```glsl
 #version 300 es
-in vec2 vUv;
 out vec4 fragColor_1;
+in vec2 vUv;
 uniform sampler2D iChannel0;
 
 void main() {
-  vec4 fragColor = vec4(0.5);
+  float sample_0 = 1.0;
+  vec4 fragColor = vec4(sample_0);
   fragColor_1 = texture(iChannel0, vUv);
 }
 ```
+
+`sample` is a reserved word in 300es so it must be renamed, and `GL_OES_standard_derivatives` has been promoted to core so it should no longer be included in GLSL.
 
 ## Usage
 
@@ -66,7 +69,7 @@ Same as above, but handles fragment shaders, where `varying` will be converted t
 
 ## Limitations
 
-Currently, if you have variable names that are using WebGL2 builtins, e.g. `texture` or `transpose`, your shader will not run.
+If any of your attributes conflict with a new builtin function or keyword like `texture` or `sample`, this method will throw an error.
 
 ## License
 

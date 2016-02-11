@@ -32,6 +32,22 @@ test('transpiles GLSL tokens from v100 to v300 es', function (t) {
   ].join('\n'), 'removes core extensions')
 
   shader = tokenize([
+    'vec3 transpose () { return vec3(1.0); }',
+    'void main() {',
+    'gl_FragColor = vec4(transpose(), 1.0);',
+    '}'
+  ].join('\n'))
+  result = stringify(transpile.fragment(shader))
+  t.equal(result, [
+    '#version 300 es',
+    'out vec4 fragColor;',
+    'vec3 transpose_0 () { return vec3(1.0); }',
+    'void main() {',
+    'fragColor = vec4(transpose_0(), 1.0);',
+    '}'
+  ].join('\n'), 'mangles function names that are matching builtins')
+
+  shader = tokenize([
     '#version 100',
     'varying vec3 sample;',
     'void main() {',
