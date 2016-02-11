@@ -48,7 +48,7 @@ function transpile100to300 (isVertex, tokens) {
       }
     } else if (token.type === 'ident' && reservedWords.indexOf(token.data) >= 0) {
       if (isVertex && isAttribtue(tokens, i)) {
-        throw new Error('Unable to transpile GLSL 100 to 300 automatically:\n' + 
+        throw new Error('Unable to transpile GLSL 100 to 300 automatically:\n' +
             'One of the vertex shader attributes is using a reserved 300es keyword "' + token.data + '"')
       }
       if (!(token.data in reservedNameCache)) {
@@ -61,8 +61,8 @@ function transpile100to300 (isVertex, tokens) {
   for (i = tokens.length - 1; i >= 0; i--) {
     token = tokens[i]
     if (token.type === 'preprocessor') {
-      var match = token.data.match(/\#extension\s+(.*)\s+\:/)
-      if (match && match[1] && coreGLSLExtensions.indexOf(match[1]) >= 0) {
+      var match = token.data.match(/\#extension\s+(.*)\:/)
+      if (match && match[1] && coreGLSLExtensions.indexOf(match[1].trim()) >= 0) {
         var nextToken = tokens[i + 1]
         var count = (nextToken && nextToken.type === 'whitespace')
           ? 2 : 1

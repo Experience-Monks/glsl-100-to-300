@@ -21,16 +21,18 @@ Input fragment shader:
 
 ```glsl
 #version 100
+#extension GL_OES_standard_derivatives : enable
 varying vec2 vUv;
 uniform sampler2D iChannel0;
 
 void main() {
-  vec4 fragColor = vec4(0.5);
+  float sample = 1.0;
+  vec4 fragColor = vec4(sample);
   gl_FragColor = texture2D(iChannel0, vUv);
 }
 ```
 
-The resulting WebGL2 shader:
+The resulting WebGL2 shader. `sample` is a reserved word in 300es, and `GL_OES_standard_derivatives` has been promoted to core so it should no longer be included in the shader.
 
 ```glsl
 #version 300 es
