@@ -7,6 +7,14 @@ test('transpiles GLSL tokens from v100 to v300 es', function (t) {
   t.throws(function () {
     transpile.vertex(tokenize('#version 300\nvoid main(){}'))
   }, 'cannot handle non-es version')
+  
+  t.throws(function () {
+    transpile.vertex(tokenize('attribute vec3 texture;\nvoid main(){}'))
+  }, 'cannot transpile reserved words in attribuets')
+  
+  t.doesNotThrow(function () {
+    transpile.vertex(tokenize('attribute vec3 foo;\nvoid main(){ float texture = 1.0; }'))
+  }, 'support reserved word in vert shader when not attribute')
 
   var shader, result
   shader = tokenize([
@@ -22,12 +30,31 @@ test('transpiles GLSL tokens from v100 to v300 es', function (t) {
     '#extension GL_EXT_fancy_dancy : enable',
     'void main() {}'
   ].join('\n'), 'removes core extensions')
-
+  
+  shader = tokenize([
+    '#version 100',
+    'varying vec3 sample;',
+    'void main() {',
+      'float centroid = 1.0;',
+      'gl_FragColor = vec4(sample, centroid);',
+    '}'
+  ].join('\n'))
+  result = stringify(transpile.fragment(shader))
+  t.equal(result, [
+    '#version 300 es',
+    'out vec4 fragColor;',
+    'in vec3 sample_0;',
+    'void main() {',
+      'float centroid_0 = 1.0;',
+      'fragColor = vec4(sample_0, centroid_0);',
+    '}'
+  ].join('\n'), 'handles 300es keywords')
+  
   shader = tokenize([
     '#version 100',
     '#define FOO',
     'attribute vec4 position;',
-    'attribute vec3 texture;',
+    'attribute vec3 texcoords;',
     'varying vec2 vUv;',
     'void main() {',
     'gl_Position = position;',
@@ -38,7 +65,7 @@ test('transpiles GLSL tokens from v100 to v300 es', function (t) {
     '#version 300 es',
     '#define FOO',
     'in vec4 position;',
-    'in vec3 texture;',
+    'in vec3 texcoords;',
     'out vec2 vUv;',
     'void main() {',
     'gl_Position = position;',

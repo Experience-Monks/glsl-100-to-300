@@ -11,6 +11,8 @@ var coreGLSLExtensions = [
   'GL_EXT_shader_texture_lod'
 ]
 
+var reservedWords = require('./lib/builtins')
+
 function transpile100to300 (isVertex, tokens) {
   var oldVersion = versionify(tokens)
   if (oldVersion === '300 es') {
@@ -19,6 +21,7 @@ function transpile100to300 (isVertex, tokens) {
   }
 
   var nameCache = {}
+  var reservedNameCache = {}
   var fragColorName = null
   var fragDepthName = null
   var i, token
@@ -27,13 +30,9 @@ function transpile100to300 (isVertex, tokens) {
     if (token.type === 'keyword') {
       if (token.data === 'attribute') token.data = 'in'
       else if (token.data === 'varying') token.data = isVertex ? 'out' : 'in'
-    }
-
-    if (token.type === 'builtin' && /texture(2D|Cube)/.test(token.data)) {
+    } else if (token.type === 'builtin' && /texture(2D|Cube)/.test(token.data)) {
       token.data = 'texture'
-    }
-
-    if (token.type === 'builtin' && !isVertex) {
+    } else if (token.type === 'builtin' && !isVertex) {
       if (token.data === 'gl_FragColor') {
         if (!fragColorName) {
           fragColorName = getUniqueName(tokens, nameCache, 'fragColor')
@@ -47,6 +46,15 @@ function transpile100to300 (isVertex, tokens) {
         }
         token.data = fragDepthName
       }
+    } else if (token.type === 'ident' && reservedWords.indexOf(token.data) >= 0) {
+      if (isVertex && isAttribtue(tokens, i)) {
+        throw new Error('Unable to transpile GLSL 100 to 300 automatically:\n' + 
+            'One of the vertex shader attributes is using a reserved 300es keyword "' + token.data + '"')
+      }
+      if (!(token.data in reservedNameCache)) {
+        reservedNameCache[token.data] = getUniqueName(tokens, nameCache, token.data)
+      }
+      token.data = reservedNameCache[token.data]
     }
   }
 
@@ -64,6 +72,25 @@ function transpile100to300 (isVertex, tokens) {
   }
 
   return tokens
+}
+
+function isAttribtue (tokens, index) {
+  for (var i = index - 1; i >= 0; i--) {
+    var token = tokens[i]
+    if (token.type === 'keyword') {
+      if (token.data === 'attribute' || token.data === 'in') {
+        return true
+      }
+    } else if (token.type === 'operator' ||
+        token.type === 'float' ||
+        token.type === 'ident' ||
+        token.type === 'builtin' ||
+        token.type === 'integer') {
+      // If we hit another token, assume it's not an attribute
+      return false
+    }
+  }
+  return false
 }
 
 function getUniqueName (tokens, nameCache, name, baseName) {
