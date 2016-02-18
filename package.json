@@ -16,7 +16,7 @@
   "devDependencies": {
     "faucet": "0.0.1",
     "glsl-token-string": "^1.0.1",
-    "glsl-tokenizer": "^2.0.2",
+    "glsl-tokenizer": "mattdesl/glsl-tokenizer#tests-300",
     "tape": "^4.0.0"
   },
   "scripts": {
