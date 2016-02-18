@@ -31,6 +31,22 @@ test('transpiles GLSL tokens from v100 to v300 es', function (t) {
     'void main() {}'
   ].join('\n'), 'removes core extensions')
 
+
+  shader = tokenize([
+    '#extension GL_EXT_shader_texture_lod : enable',
+    'uniform samplerCube envMap;',
+    'varying vec3 input;',
+    'void main() { gl_FragColor = textureCubeLodEXT(envMap, input, 0.0); }'
+  ].join('\n'))
+  result = stringify(transpile.fragment(shader))
+  t.equal(result, [
+    '#version 300 es',
+    'out vec4 fragColor;',
+    'uniform samplerCube envMap;',
+    'in vec3 input;',
+    'void main() { fragColor = textureLod(envMap, input, 0.0); }'
+  ].join('\n'), 'handles EXT_shader_texture_lod')
+
   shader = tokenize([
     'vec3 transpose () { return vec3(1.0); }',
     'void main() {',

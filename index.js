@@ -30,8 +30,8 @@ function transpile100to300 (isVertex, tokens) {
     if (token.type === 'keyword') {
       if (token.data === 'attribute') token.data = 'in'
       else if (token.data === 'varying') token.data = isVertex ? 'out' : 'in'
-    } else if (token.type === 'builtin' && /texture(2D|Cube)/.test(token.data)) {
-      token.data = 'texture'
+    } else if ((token.type === 'builtin') && /^texture(2D|Cube)?/.test(token.data)) {
+      token.data = token.data.replace(/(2D|Cube|EXT)/g, '')
     } else if (token.type === 'builtin' && !isVertex) {
       if (token.data === 'gl_FragColor') {
         if (!fragColorName) {
